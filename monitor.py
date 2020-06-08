@@ -29,7 +29,7 @@
 """
 
 import time, os, subprocess, httplib, datetime
-from apscheduler.scheduler import Scheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 # The next 2 lines enable logging for the scheduler. Uncomment for debugging.
 import logging
@@ -39,7 +39,7 @@ pulsecount=0
 power=0
 
 # Start the scheduler
-sched = Scheduler()
+sched = BlockingScheduler()
 sched.start()
 
 
