@@ -13,14 +13,14 @@
 case "$1" in
 	start)
 		echo "Starting power monitor..."
-		gpio edge 1 falling
+		#gpio edge 1 falling #not needed now we're using pigpio
 		python /home/pi/power/monitor.py &
 		;;
 	stop)
 		echo "Stopping power monitor..."
 		kill `ps -ef | grep monitor.py | grep -v grep | awk '{print $2}'`
-		killall gpio-new
-		killall gpio-test
+		#killall gpio-new
+		#killall gpio-test
 		killall gpio-pigtest
 		;;
 	*)
