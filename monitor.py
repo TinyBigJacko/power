@@ -76,5 +76,5 @@ def SendPulses():
         connection.request("GET", url)
 
 
-for line in runProcess(["/usr/local/bin/gpio-test"]):
+for line in runProcess(["/usr/local/bin/gpio-pigtest"]):
     pulsecount += 1
