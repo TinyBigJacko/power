@@ -32,8 +32,8 @@ import time, os, subprocess, httplib, datetime
 from apscheduler.scheduler import Scheduler
 
 # The next 2 lines enable logging for the scheduler. Uncomment for debugging.
-#import logging
-#logging.basicConfig()
+import logging
+logging.basicConfig(filename='/var/log/monitorpy.log', level=logging.WARNING)
 
 pulsecount=0
 power=0
@@ -46,10 +46,14 @@ sched.start()
 # This function monitors the output from gpio-irq C app
 # Code from vartec @ http://stackoverflow.com/questions/4760215/running-shell-command-from-python-and-capturing-the-output
 def runProcess(exe):
+    logging.debug('runProcess started')
     p = subprocess.Popen(exe, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while(True):
+      logging.debug('runProcess while-loop entered')
       retcode = p.poll() #returns None while subprocess is running
+      logging.debug('runProcess poll ended, retcode: %s', retcode)
       line = p.stdout.readline()
+      logging.debug('runProcess readline ended, line: %s', line)
       yield line
       if(retcode is not None):
         break
@@ -60,16 +64,17 @@ def runProcess(exe):
 def SendPulses():
 	global pulsecount
 	global power
-#	print ("Pulses: %i") % pulsecount # Uncomment for debugging.
+	logging.debug('Pulses: %s', pulsecount) # Uncomment for debugging.
 	# The next line calculates a power value in watts from the number of pulses, my meter is 1000 pulses per kWh, you'll need to modify this if yours is different.
 	power = pulsecount * 60
-#	print ("Power: %iW") % power # Uncomment for debugging.
+	logging.debug('Power: %sW', power) # Uncomment for debugging.
 	pulsecount = 0;
 	timenow = time.strftime('%s')
-        url = ("/emoncms/input/post.json?time=%s&node=1&json={power:%i}&apikey=<insert API key here>") % (timenow, power) # You'll need to put in your API key here from EmonCMS
+	logging.debug('Time: %s (%s)', timenow, time.strftime('%c',time.localtime(float(timenow)))) # Uncomment for debugging.
+        url = ("/input/post?time=%s&node=pulsepi&json={power1:%i}&apikey=4613f98e5be0f9d5d2000530fde51573") % (timenow, power) # You'll need to put in your API key here from EmonCMS
         connection = httplib.HTTPConnection("localhost")
         connection.request("GET", url)
 
 
-for line in runProcess(["/usr/local/bin/gpio-new"]):
+for line in runProcess(["/usr/local/bin/gpio-test"]):
     pulsecount += 1
