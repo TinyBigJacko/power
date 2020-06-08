@@ -33,11 +33,12 @@ The original sigmoid LDR-based circuit is documented here: http://pyevolve.sourc
 On your Raspberry Pi, you will need to ensure that you have certain Python related files installed. To make sure, type the following commands...
 
 ```bash
-sudo apt-get install python-dev python-pip
+sudo apt-get update
+sudo apt-get install python-dev python-pip pigpio
 sudo pip install apscheduler
 ```
 
-The above installs the advanced python scheduler used by the code.
+The above installs the advanced python scheduler used by the code, plus the pigpio C library (see below).
 Now you will want to download the files from this github repository. To do so, type the following commands...
 
 ```bash
@@ -56,14 +57,17 @@ sudo update-rc.d power-monitor defaults
 **Note:** Be sure to check the power-monitor file to make sure that the path to the Python application, monitor.py, matches with the path on your system. For example, /home/pi/power/power.py
 
 Due to Python's inability to respond to an interrupt, I've used a very simple C app to listen for an interrupt triggered when the phototransistor detects a pulse. Monitor.py counts these pulses and each minute, creates a power reading in watts which it sends to EmonCMS' API.
-This file was adapted and simplified from the example isr.c distributed with wiringPi by Gordon Henderson
+This file was adapted and simplified from the example isr.c distributed with wiringPi by Gordon Henderson, then modified by TinyBigJacko to run using pigpio (http://abyz.me.uk/rpi/pigpio/ ) 
 This app will need compiling like so:
 
 ```bash
-gcc gpio-pigtest.c -o gpio-pigtest -lpigpio
+gcc gpio-pigtest.c -o gpio-pigtest -lpigpio -lrt
 ```
 
 Put it somewhere accessible - I used /usr/local/bin, this will need modifying at the bottom of monitor.py if you put it somewhere else.
+```bash
+sudo cp gpio-pigtest /usr/local/bin
+```
 
 Once all this is done you can start the data logging process...
 
