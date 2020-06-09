@@ -71,7 +71,7 @@ def SendPulses():
 	pulsecount = 0;
 	timenow = time.strftime('%s')
 	logging.debug('Time: %s (%s)', timenow, time.strftime('%c',time.localtime(float(timenow)))) # Uncomment for debugging.
-        url = ("/input/post?time=%s&node=pulsepi&json={power1:%i}&apikey=4613f98e5be0f9d5d2000530fde51573") % (timenow, power) # You'll need to put in your API key here from EmonCMS
+        url = ("/input/post?time=%s&node=pulsepi&json={power1:%i}&apikey=<<INSERT-YOUR-READ-WRITE-API-KEY-HERE>>") % (timenow, power) # You'll need to put in your API key here from EmonCMS
         connection = httplib.HTTPConnection("localhost")
         connection.request("GET", url)
 
