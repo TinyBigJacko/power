@@ -35,13 +35,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import logging
 logging.basicConfig(filename='/var/log/monitorpy.log', level=logging.WARNING)
 
+# grab the emoncms r/w apikey from the apikey.py file (you need to create this!)
+import apikey
+ 
+
 pulsecount=0
 power=0
 
-# Start the scheduler
-sched = BackgroundScheduler()
-sched.add_job(SendPulses, 'interval', seconds=60)
-sched.start()
 
 
 # This function monitors the output from gpio-irq C app
@@ -71,9 +71,15 @@ def SendPulses():
 	pulsecount = 0;
 	timenow = time.strftime('%s')
 	logging.debug('Time: %s (%s)', timenow, time.strftime('%c',time.localtime(float(timenow)))) # Uncomment for debugging.
-        url = ("/input/post?time=%s&node=pulsepi&json={power1:%i}&apikey=<<INSERT-YOUR-READ-WRITE-API-KEY-HERE>>") % (timenow, power) # You'll need to put in your API key here from EmonCMS
+        url = ("/input/post?time=%s&node=pulsepi&json={power1:%i}&apikey=%s") % (timenow, power, apikey.emoncms_apikey)
         connection = httplib.HTTPConnection("localhost")
         connection.request("GET", url)
+
+
+# Start the scheduler
+sched = BackgroundScheduler()
+sched.add_job(SendPulses, 'interval', seconds=60)
+sched.start()
 
 
 for line in runProcess(["/usr/local/bin/gpio-pigtest"]):
