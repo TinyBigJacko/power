@@ -1,3 +1,15 @@
+# Ignore temporary backups
 *.bak
+
+# Ignore all compiled files
 *.o
+*.py[codz]
+__pycache__/
+gpio-pigtest
+
+# Ignore runtime-generated logfiles
+gpio-pigtest.log
+monitorpy.log
+
+# Ignore local APIKey
 apikey.py
